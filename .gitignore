@@ -9,8 +9,13 @@ __pycache__/
 *.pyc
 
 # Ignore data and models (can be added to Git LFS later if needed)
-data/
-models/
+data/*
+models/*
+
+#But allow only this folder as empty with .gitkeep
+
+!data/.gitkeep
+!models/.gitkeep
 
 # Ignore environment files
 .env
