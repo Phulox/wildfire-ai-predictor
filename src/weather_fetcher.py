@@ -33,6 +33,17 @@ def fetch_weather_open_meteo(lat, lon, date): #date format is YYYY-MM-DD
         hums = data["hourly"]["relative_humidity_2m"]
         winds = data["hourly"]["windspeed_10m"]
 
+        #filter for any NONE values
+
+        temps = [t for t in temps if t is not None]
+        hums = [h for h in hums if h is not None]
+        winds = [w for w in winds if w is not None]
+
+        #Case where temps or hums or winds are empty lists (no data)
+
+        if not temps or not hums or not winds:
+            print(f"Insufficient weather data for {lat},{lon} on {date}")
+            return None
 
         return {
             #returning averages for each weather component
@@ -40,7 +51,12 @@ def fetch_weather_open_meteo(lat, lon, date): #date format is YYYY-MM-DD
             "humidity": sum(hums)/len(hums),
             "wind_speed": sum(winds)/len(winds)
         }
-    
+    except requests.RequestException as e:
+        print(f"Network error fetching weather for {lat},{lon} on {date}: {e}")
+        return None
+    except KeyError as e:
+        print(f"Unexpected API response structure for {lat},{lon} on {date}: {e}")
+        return None
     except Exception as e:
         print(f"Failed to fetch weather for {lat},{lon} on {date}: {e}")
         return None
